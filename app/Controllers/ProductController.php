@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\ShopifyModel;
 use App\Models\ProductModel;
+use CodeIgniter\RESTful\ResourceController;
 
 class ProductController extends BaseController
 {
@@ -67,5 +68,50 @@ class ProductController extends BaseController
 
         // Redirect back to the sync page
         return redirect()->to('public/sync-page');
+    }
+	//save custom field in DB through Form
+	public function save()
+	{
+    $productModel = new \App\Models\ProductModel();
+    $data = $this->request->getPost();
+
+    if ($productModel->update($data['product_id'], $data)) {
+        return $this->response->setJSON(['message' => 'Product updated successfully!']);
+    } else {
+        return $this->response->setJSON(['message' => 'Failed to update the product.']);
+    }
+	}
+
+	//Get product data in form from DB
+	public function getProductDetails($productId)
+	{
+    $productModel = new \App\Models\ProductModel();
+    $product = $productModel->find($productId);
+
+    return $this->response->setJSON($product);
+	}
+	public function edit()
+    {
+        // Load data, if necessary
+        $productModel = new \App\Models\ProductModel();
+        $data['products'] = $productModel->findAll();
+
+        return view('edit_product', $data);
+    }
+
+}
+class ProductApiController extends ResourceController
+{
+    protected $modelName = 'App\Models\ProductModel';
+    protected $format    = 'json';
+
+    public function getProductData($productId)
+    {
+        $product = $this->model->find($productId);
+        if ($product) {
+            return $this->respond($product);
+        } else {
+            return $this->failNotFound('No product found with ID ' . $productId);
+        }
     }
 }

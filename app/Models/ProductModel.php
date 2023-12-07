@@ -12,7 +12,7 @@ class ProductModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields = ['shopify_product_id', 'title', 'price', 'image_url'];
+    protected $allowedFields = ['shopify_product_id', 'title', 'price', 'image_url', 'sub_heading'];
 
     // Dates
     protected $useTimestamps = false;
